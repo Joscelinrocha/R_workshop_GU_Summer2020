@@ -1,8 +1,8 @@
 # R_workshop_GU_Summer2020
 
 Summer 2020
-Instructor: Joscelin Rocha-Hidalgo
-Lenght of workshop: Two 4-hr sessions
+Instructor: Joscelin Rocha-Hidalgo.    
+Length of workshop: Two 4-hr sessions
 
 Email: jr1679@georgetown.edu
 
