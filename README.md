@@ -10,7 +10,7 @@ This repo:
 
 This repo contains slides and exercises for R in RStudio that accompany the workshop. Materials are not meant as a standalone course.
 Here you can find:
-- Slides for introduction to R, r markdown, and ggplot2 (all in .RMD and .html)
+- Slides for introduction to R, r markdown, and ggplot2 (all in .Rmd and .html)
 - Dataset used for the exercises
-- Examples, exercises, and solutions (all in .RMD and .html)
+- Examples, exercises, and solutions (all in .Rmd and .html)
 
