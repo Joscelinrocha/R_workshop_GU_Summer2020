@@ -1,0 +1,198 @@
+---
+title: "Data Visualization Solutions"
+author: "Joscelin Rocha Hidalgo"
+output: 
+    html_document:
+        css: slides/style.css
+        toc: true
+        toc_depth: 1
+        toc_float: true
+        df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Packages
+
+Let's load the `tidyverse` package + `ggplot2`. 
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+
+# Import chds6162_data 
+
+```{r}
+data <- read_csv("data/chds6162_data.csv")
+
+#then run this:
+data <- data %>%
+  mutate(ded_lbls = case_when(
+    ded == 0 ~ "<8th",
+    ded == 1 ~ "8th-12th",
+    ded == 2 ~ "HS degree",
+    ded == 3 ~ "HS+trade",
+    ded == 4 ~ "Some college",
+    ded == 5 ~ "College degree",
+    ded == 6 ~ "Trade school",
+    ded == 7 ~ "HS unclear"))
+
+```
+
+
+# Scatterplot
+
+Make a scatterplot that shows dad weight on the x axis and dad height on the y axis.
+
+```{r}
+ggplot(data,aes(dwt,dht)) + geom_point()
+```
+
+
+
+# Histogram 
+
+Make a histogram that shows the distribution of the fathers' weight variable (`dwt`).
+
+
+```{r}
+ggplot(data = data, 
+       mapping = aes(x = dwt)) +
+  geom_histogram()
+```
+
+Now with try with 50 bins.
+
+```{r}
+ggplot(data = data, 
+       mapping = aes(x = dwt)) +
+  geom_histogram(bins = 50)
+```
+
+# Bar Chart
+
+
+## Bar Chart for specific values
+
+I created a new dataframe`dad_hgt_by_ed` that shows the average amount of height in inches that males reported based on their education level.
+
+```{r}
+dad_hgt_by_ed <- data %>%
+  group_by(ded_lbls) %>% 
+  summarize(avg_ht = mean(dht, na.rm = TRUE)) 
+```
+
+Plot the average height for fathers for the different education levels (`ded_lbls`). Remember if NAs are being plotted, you can drop them! (hint `drop_NA`)
+
+```{r}
+ggplot(data = dad_hgt_by_ed, 
+       mapping = aes(x = ded_lbls,
+                     y = avg_ht)) +
+  geom_bar(stat = "identity")
+```
+
+# `color` and `fill`
+
+Take your graph from above and make the inside of each bar a different color.
+
+```{r}
+ggplot(data = dad_hgt_by_ed, 
+       mapping = aes(x = ded_lbls,
+                     y = avg_ht,
+                     fill = ded_lbls)) +
+  geom_bar(stat = "identity")
+```
+
+
+# Scales
+
+## color
+
+Take the scatterplot you made earlier: make the points different colors based on education (`ded`) and add a scale using `scale_color_viridis_d`. 
+
+```{r}
+
+ggplot(data,aes(dwt,dht, color = ded_lbls)) + geom_point() + scale_color_viridis_d(option = "inferno")
+
+
+
+#You can also do it manually:
+
+ggplot(data = data, 
+       mapping = aes(x = dwt,
+                     y = dht,
+                     color = ded_lbls)) +
+  geom_point() +
+  scale_color_manual(values = c("orange", "black","green","blue","pink","#1F271B","brown","purple"))
+
+```
+
+
+# Plot Labels
+
+Use the code chunk from above and do the following:
+
+1. Add a title
+2. Add a better x & y axis label
+
+```{r}
+ggplot(data,aes(dwt,dht, color = ded_lbls)) + 
+  geom_point() + 
+  scale_color_viridis_d(option = "inferno") + 
+  labs (title = "Fathers' weight vs height based on education level", 
+        x = "Weight (pounds)", 
+        y = "Height (inches)", 
+        color = "Education levels")
+```
+
+
+
+# Themes
+
+Use the last plot and add the `theme_classic` to your plot.
+
+```{r}
+ggplot(data,aes(dwt,dht, color = ded_lbls)) + 
+  geom_point() + scale_color_viridis_d(option = "inferno") + 
+  labs (title = "Fathers' weight vs height based on education level", 
+        x = "Weight (pounds)", 
+        y = "Height (inches)", 
+        color = "Education levels") + 
+  theme_classic()
+
+ggsave("plots/my-chunk-plot.png",width = 10, height = 5)
+
+```
+
+# Facets
+
+Instead of looking at the plot the way you did earlier, your boss wants you to create multiple plots (one for each education level). How can you do it? (hint: `facet_wrap(~XX)`)
+
+```{r}
+ggplot(data,aes(dwt,dht, color = ded_lbls)) + 
+  geom_point() + 
+  scale_color_viridis_d(option = "inferno") + 
+  labs (title = "Fathers' weight vs height based on education level", x = "Weight (pounds)", y = "Height (inches)", color = "Education levels") +
+  theme_classic() + 
+  facet_wrap(~ded_lbls)
+```
+
+
+# Save Plots
+
+Save your last plot to a PNG that is 10 inches wide and  5 inches high. Put it in the plots directory and call it "my-fav-plot.png"
+
+
+```{r}
+ggsave("plots/my-fav-plot.png",width = 10, height = 5)
+
+```
+
+
+
+

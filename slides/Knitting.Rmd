@@ -1,0 +1,27 @@
+---
+title: "This workshop is awesome"
+author: "Joscelin Rocha Hidalgo"
+date: "07/18/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Joscelin is trying to teach you rmarkdown
+
+This is an word document showing you how the document gets "knitted".
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+
+```
+
+## You can even include plots
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE, message=FALSE, warning=FALSE}
+plot(pressure)
+```

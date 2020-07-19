@@ -1,0 +1,8 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = F, 
+                      warning = F,
+                      message = F,
+                      rows.print = 5)
+
+
+```

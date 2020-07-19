@@ -1,0 +1,23 @@
+---
+title: "Example"
+author: "Joscelin Rocha Hidalgo"
+date: "7/17/2020"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+```
+
+```{r include=FALSE}
+name1 <- "Joscelin"
+name2 <- "Julia"
+```
+
+Hi, my name is `r name1` and I am with `r name2`.

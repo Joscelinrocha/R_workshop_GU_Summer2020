@@ -1,0 +1,273 @@
+---
+title: "Data Manipulation Exercises"
+author: "Joscelin Rocha Hidalgo"
+output: 
+    html_document:
+        css: slides/style.css
+        toc: true
+        toc_depth: 1
+        toc_float: true
+        df_print: paged
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load Packages
+
+Load the `tidyverse` package and the `ggplot2` package.
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+# Import data: chds6162_data
+
+Import the chds6162_data to a dataframe called `data`. 
+
+```{r}
+data <- read_csv("data/chds6162_data.csv")
+```
+
+
+
+# select
+
+![](slides/images/select.png)
+![](https://swcarpentry.github.io/r-novice-gapminder/fig/13-dplyr-fig1.png)
+
+Use `select` to show just the `marital` variable.
+
+```{r}
+data %>% 
+    select(marital)
+```
+
+`select` for multiple variables:
+
+Use `select` to show `marital` and `ed` variables.
+
+```{r}
+data %>% 
+    select(marital,ed)
+```
+
+Use  `select`  for a range of columns. 
+
+`select` all the variables from `wt` to the end.
+
+```{r}
+# option one:
+
+data %>% 
+    select(wt:number)
+
+# option 2:
+
+data %>% 
+    select(wt:last_col())
+```
+
+Drop the `race` variable.
+
+```{r}
+data %>% 
+    select(-race)
+```
+
+Drop the variables that belonged to the father from `drace` to `dwt`
+
+```{r}
+
+data %>% 
+    select(-(drace:dwt))
+
+```
+
+# mutate
+
+![](slides/images/mutate.png)
+![art by @allison_horst](slides/images/dplyr_mutate.png)
+art by @allison_horst
+
+
+Create a **new variable with a specific value**
+
+Create a new variable called `country` and fill that variable with "US".
+
+```{r}
+data %>% 
+    mutate(country = "US") 
+```
+
+
+Create a **new variable based on other variables**
+
+Create a new variable called `gestation_weeks` and calculate gestation length in weeks rather than days (try rounding this number to only 2 decimals). Remember that the `gestation` variable is a measure of the **gestation length** in days. Then `select` both variables. 
+
+```{r}
+data %>% 
+    mutate(gestation_weeks = round(gestation / 7,2)) %>% 
+    select(gestation, gestation_weeks)
+```
+
+Change an **existing variable**
+
+Convert the `dwt` variable to kilos by dividing by 2.205 (it's in pounds now). Then, use `select` to show only the `dwt` variable.
+
+```{r}
+data %>% 
+    mutate(dwt = dwt / 2.205) %>% 
+    select(dwt)
+```
+
+# case_when
+
+![art by @allison_horst](slides/images/dplyr_case_when.png)
+art by @allison_horst
+
+Using mutate and case_when, let's create a variable called `age_group`. In this variable we will use the mom's age variable and recode it so all moms whose age are now "20s", "30s", and so on. Then select the `id` and the new variable
+
+*tip= Wanna know the range of your sample age? Use `range(dataframe$variable,na.rm = TRUE)`
+
+** Use `%in%` (you just learned it 😉)
+
+```{r}
+
+range(data$age,na.rm = TRUE)
+
+data %>% 
+  mutate(age_group = case_when(
+    age %in% 10:19 ~ "10s",
+    age %in% 20:29 ~ "20s",
+    age %in% 30:39 ~ "30s",
+    age %in% 40:49 ~ "40s",
+    age %in% 50:59 ~ "50s"
+  ))
+
+```
+
+
+# filter
+![](slides/images/filter.png)
+![art by @allison_horst](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/dplyr_filter.jpg)
+art by @allison_horst
+
+We use `filter` to choose a subset of cases.
+
+Use `filter` to keep only respondents who are divorced (`marital` = 3). 
+
+```{r}
+data %>% 
+    filter(marital == 3) %>% 
+    select(marital)
+```
+
+Use `filter` to keep only respondents who are **not** divorced. 
+
+```{r}
+data %>% 
+    filter(marital != 3) %>% 
+    select(marital)
+```
+
+Use `%in%` within the `filter` function to keep only those whose mothers' race was reported as white. In this dataset, values from 0 to 5 represent "white" under the `race`variable.
+
+```{r}
+data %>% 
+    filter(race %in% c(0:5))
+```
+
+Create a chain that keeps only those are college grads (value of 5). Then, `filter` to keep only those who are not married (value of 5). Finally, use `select` to show only the `ed` and `marital` variables.
+
+```{r}
+data %>% 
+    filter(ed == 5) %>% 
+    filter(marital != 5) %>% 
+    select(ed, marital)
+```
+
+
+# summarize or summarise
+
+![](slides/images/summarize.png)
+
+Get the mean, median, min, and max weight for the fathers `dwt`.
+
+```{r}
+data %>% 
+    summarize(mean_dad_weight = mean(dwt,na.rm = TRUE),
+              median_dad_weight = median(dwt, na.rm = TRUE),
+              min_dad_weight = min(dwt, na.rm = TRUE),
+              max_dad_weight = max(dwt, na.rm = TRUE))
+```
+
+# group_by
+
+![](slides/images/group-by.png)
+![art by @allison_horst](slides/images/group_by_ungroup.png)
+art by @allison_horst
+
+Calculate the mean weight for fathers based on their education levels (`ded`variable has some NAs, don't forget to remove them!)
+ with `na.rm=`)
+ 
+```{r}
+data %>% 
+    group_by(ded) %>% 
+    drop_na(ded) %>%
+    summarize(dad_weight = mean(dwt,
+                                na.rm = TRUE))
+```
+# across
+![art by @allison_horst](slides/images/dplyr_across.png)
+art by @allison_horst
+
+We messed up and we found out that out collaborators need the mean of all the variables for dad by their race category (dads'). 
+
+Use `across` to get them all!
+* Don't forget to remove NAs otherwise it will yell at you!
+
+```{r}
+data %>% 
+  drop_na(drace) %>%
+  group_by(drace) %>%
+  summarize(across(dage:dwt,mean,na.rm = TRUE))
+```
+
+
+# Big exercise
+
+A new data frame called `mothers_below30` that:
+
+1. Uses `filter` to only include those age younger than 30
+2. Uses `mutate` to transform the `gestation` variable into weeks rather than days
+3. Uses `group_by` to create mom education groups
+4. Uses `summarise` to calculate a new variable called `mean_gestation_w`
+5. Make sure to export it as a csv!
+
++ Once you have that data frame just move of the variables to a different position using "relocate"
+
+```{r}
+mothers_below30 <- data %>% 
+    filter(age < 30) %>% 
+    mutate(gestation_w = gestation/7) %>%
+    group_by(ed) %>% 
+    summarize(mean_gestation_w = mean(gestation_w,na.rm = TRUE))
+write_csv(mothers_below30,"exports/moms_under30.csv")
+```
+
+
+With Bonus:
+
+```{r}
+mothers_below30 <- data %>% 
+    filter(age < 30) %>% 
+    mutate(gestation_w = gestation/7) %>%
+    group_by(ed) %>% 
+    summarize(mean_gestation_w = mean(gestation_w,na.rm = TRUE)) %>%
+    relocate (mean_gestation_w, .after=ed)
+write_csv(mothers_below30,"exports/moms_under30.csv")
+```
